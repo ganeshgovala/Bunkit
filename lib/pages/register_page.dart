@@ -3,18 +3,18 @@
 import 'dart:ui';
 
 import 'package:bunkit/components/input_field.dart';
-import 'package:bunkit/pages/register_page.dart';
+import 'package:bunkit/pages/login_page.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+class RegisterPage extends StatefulWidget {
+  const RegisterPage({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<RegisterPage> createState() => _RegisterPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,28 +31,28 @@ class _LoginPageState extends State<LoginPage> {
                       right: MediaQuery.of(context).size.width * (10/MediaQuery.of(context).size.width),
                       child: Transform.rotate(
                           angle: 0.333,
-                          child: Image.asset("lib/assets/devil-emoji.png",
+                          child: Image.asset("lib/assets/heart-eyed-emoji.png",
                               height: MediaQuery.of(context).size.width * (66/MediaQuery.of(context).size.width)))),
                   Positioned(
                       top: MediaQuery.of(context).size.width * (50/MediaQuery.of(context).size.width),
                       left: MediaQuery.of(context).size.width * (20/MediaQuery.of(context).size.width),     
                       child: Transform.rotate(
                           angle: -0.733,
-                          child: Image.asset("lib/assets/shocking-emoji.png",
+                          child: Image.asset("lib/assets/jealous-emoji.png",
                               height: MediaQuery.of(context).size.width * (50/MediaQuery.of(context).size.width)))),
                   Positioned(
                       top: MediaQuery.of(context).size.width * (30/MediaQuery.of(context).size.width),
                       right: MediaQuery.of(context).size.width * (100/MediaQuery.of(context).size.width),
                       child: Transform.rotate(
                           angle: -0.533,
-                          child: Image.asset("lib/assets/sparkle-emoji.png",
+                          child: Image.asset("lib/assets/tongue-out-emoji.png",
                               height: MediaQuery.of(context).size.width * (62/MediaQuery.of(context).size.width)))),
                   Positioned(
                       top: MediaQuery.of(context).size.width * (180/MediaQuery.of(context).size.width),
                       left: MediaQuery.of(context).size.width * (-50/MediaQuery.of(context).size.width),
                       child: Transform.rotate(
                           angle: 0.1,
-                          child: Image.asset("lib/assets/tongue-out-emoji.png",
+                          child: Image.asset("lib/assets/sparkle-emoji.png",
                               height: MediaQuery.of(context).size.width * (100/MediaQuery.of(context).size.width)))),
                   Positioned(
                       top: MediaQuery.of(context).size.width * (130/MediaQuery.of(context).size.width),
@@ -61,7 +61,7 @@ class _LoginPageState extends State<LoginPage> {
                         filter: ImageFilter.blur(sigmaX: 3, sigmaY: 5),
                         child: Transform.rotate(
                             angle: 0.633,
-                            child: Image.asset("lib/assets/jealous-emoji.png",
+                            child: Image.asset("lib/assets/shocking-emoji.png",
                                 height: MediaQuery.of(context).size.width * (105/MediaQuery.of(context).size.width))),
                       )),
                   Positioned(
@@ -69,7 +69,7 @@ class _LoginPageState extends State<LoginPage> {
                       right: MediaQuery.of(context).size.width * (60/MediaQuery.of(context).size.width),
                       child: Transform.rotate(
                           angle: -0.733,
-                          child: Image.asset("lib/assets/heart-eyed-emoji.png",
+                          child: Image.asset("lib/assets/devil-emoji.png",
                               height: MediaQuery.of(context).size.width * 0.35))),
                 ],
               )),
@@ -85,12 +85,17 @@ class _LoginPageState extends State<LoginPage> {
             child: Column(
               children: [
                 Center(
-                  child: Text("Signin",
+                  child: Text("Signup",
                       style: GoogleFonts.poppins(
                         fontSize: MediaQuery.of(context).size.width * 0.077,
                         color: const Color.fromARGB(255, 27, 27, 27),
                         fontWeight: FontWeight.bold,
                       )),
+                ),
+                SizedBox(height: MediaQuery.of(context).size.width * 0.0483),
+                InputField(
+                  hintText: "Name",
+                  obsecureText: false,
                 ),
                 SizedBox(height: MediaQuery.of(context).size.width * 0.0283),
                 InputField(
@@ -109,7 +114,7 @@ class _LoginPageState extends State<LoginPage> {
                         color: const Color.fromARGB(255, 30, 30, 30),
                         borderRadius: BorderRadius.circular(12)),
                     child: Center(
-                      child: Text("Sign in",
+                      child: Text("Sign up",
                           style: GoogleFonts.poppins(
                             fontSize: MediaQuery.of(context).size.width * 0.0434,
                             fontWeight: FontWeight.bold,
@@ -117,7 +122,7 @@ class _LoginPageState extends State<LoginPage> {
                           )),
                     )),
                 SizedBox(height: MediaQuery.of(context).size.width * 0.0257),
-                Text("Don't have an account ?",
+                Text("Already have an account ?",
                     style: GoogleFonts.poppins(
                       fontSize: MediaQuery.of(context).size.width * 0.0384,
                       color: const Color.fromARGB(255, 52, 52, 52),
@@ -125,9 +130,9 @@ class _LoginPageState extends State<LoginPage> {
                 SizedBox(height: MediaQuery.of(context).size.width * 0.0144),
                 GestureDetector(
                   onTap: () {
-                     Navigator.push(context, MaterialPageRoute(builder: (context) => RegisterPage()));
+                     Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPage()));
                   },
-                  child: Text("Create Account",
+                  child: Text("Signin",
                       style: GoogleFonts.poppins(
                         fontSize: MediaQuery.of(context).size.width * 0.0434,
                         fontWeight: FontWeight.w600,
