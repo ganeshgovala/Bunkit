@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, prefer_final_fields, must_be_immutable
+// ignore_for_file: prefer_const_constructors, prefer_final_fields, must_be_immutable, avoid_print
 
 import 'dart:ui';
 
@@ -6,10 +6,12 @@ import 'package:bunkit/bloc/attendance_bloc.dart';
 import 'package:bunkit/bloc/register_bloc.dart';
 import 'package:bunkit/components/dialog_box.dart';
 import 'package:bunkit/components/input_field.dart';
+import 'package:bunkit/pages/bottom_navigation.dart';
 import 'package:bunkit/pages/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class RegisterPage extends StatefulWidget {
   RegisterPage({super.key});
@@ -22,6 +24,15 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
+
+  Future<void> addDataToLS(String reg_no, String password, String name) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString("reg_no", reg_no);
+    await prefs.setString("password", password);
+    await prefs.setString("name", name);
+    await prefs.setBool("isLoggedIn", true);
+  }
+
   @override
   Widget build(BuildContext context) {
     final registerBloc = BlocProvider.of<RegisterBloc>(context);
@@ -36,50 +47,68 @@ class _RegisterPageState extends State<RegisterPage> {
               child: Stack(
                 children: [
                   Positioned(
-                      top: MediaQuery.of(context).size.width * (80/MediaQuery.of(context).size.width),
-                      right: MediaQuery.of(context).size.width * (10/MediaQuery.of(context).size.width),
+                      top: MediaQuery.of(context).size.width *
+                          (80 / MediaQuery.of(context).size.width),
+                      right: MediaQuery.of(context).size.width *
+                          (10 / MediaQuery.of(context).size.width),
                       child: Transform.rotate(
                           angle: 0.333,
                           child: Image.asset("lib/assets/heart-eyed-emoji.png",
-                              height: MediaQuery.of(context).size.width * (66/MediaQuery.of(context).size.width)))),
+                              height: MediaQuery.of(context).size.width *
+                                  (66 / MediaQuery.of(context).size.width)))),
                   Positioned(
-                      top: MediaQuery.of(context).size.width * (50/MediaQuery.of(context).size.width),
-                      left: MediaQuery.of(context).size.width * (20/MediaQuery.of(context).size.width),     
+                      top: MediaQuery.of(context).size.width *
+                          (50 / MediaQuery.of(context).size.width),
+                      left: MediaQuery.of(context).size.width *
+                          (20 / MediaQuery.of(context).size.width),
                       child: Transform.rotate(
                           angle: -0.733,
                           child: Image.asset("lib/assets/jealous-emoji.png",
-                              height: MediaQuery.of(context).size.width * (50/MediaQuery.of(context).size.width)))),
+                              height: MediaQuery.of(context).size.width *
+                                  (50 / MediaQuery.of(context).size.width)))),
                   Positioned(
-                      top: MediaQuery.of(context).size.width * (30/MediaQuery.of(context).size.width),
-                      right: MediaQuery.of(context).size.width * (100/MediaQuery.of(context).size.width),
+                      top: MediaQuery.of(context).size.width *
+                          (30 / MediaQuery.of(context).size.width),
+                      right: MediaQuery.of(context).size.width *
+                          (100 / MediaQuery.of(context).size.width),
                       child: Transform.rotate(
                           angle: -0.533,
                           child: Image.asset("lib/assets/tongue-out-emoji.png",
-                              height: MediaQuery.of(context).size.width * (62/MediaQuery.of(context).size.width)))),
+                              height: MediaQuery.of(context).size.width *
+                                  (62 / MediaQuery.of(context).size.width)))),
                   Positioned(
-                      top: MediaQuery.of(context).size.width * (180/MediaQuery.of(context).size.width),
-                      left: MediaQuery.of(context).size.width * (-50/MediaQuery.of(context).size.width),
+                      top: MediaQuery.of(context).size.width *
+                          (180 / MediaQuery.of(context).size.width),
+                      left: MediaQuery.of(context).size.width *
+                          (-50 / MediaQuery.of(context).size.width),
                       child: Transform.rotate(
                           angle: 0.1,
                           child: Image.asset("lib/assets/sparkle-emoji.png",
-                              height: MediaQuery.of(context).size.width * (100/MediaQuery.of(context).size.width)))),
+                              height: MediaQuery.of(context).size.width *
+                                  (100 / MediaQuery.of(context).size.width)))),
                   Positioned(
-                      top: MediaQuery.of(context).size.width * (130/MediaQuery.of(context).size.width),
-                      left: MediaQuery.of(context).size.width * (60/MediaQuery.of(context).size.width),
+                      top: MediaQuery.of(context).size.width *
+                          (130 / MediaQuery.of(context).size.width),
+                      left: MediaQuery.of(context).size.width *
+                          (60 / MediaQuery.of(context).size.width),
                       child: BackdropFilter(
                         filter: ImageFilter.blur(sigmaX: 3, sigmaY: 5),
                         child: Transform.rotate(
                             angle: 0.633,
                             child: Image.asset("lib/assets/shocking-emoji.png",
-                                height: MediaQuery.of(context).size.width * (105/MediaQuery.of(context).size.width))),
+                                height: MediaQuery.of(context).size.width *
+                                    (105 / MediaQuery.of(context).size.width))),
                       )),
                   Positioned(
-                      top: MediaQuery.of(context).size.width * (180/MediaQuery.of(context).size.width),
-                      right: MediaQuery.of(context).size.width * (60/MediaQuery.of(context).size.width),
+                      top: MediaQuery.of(context).size.width *
+                          (180 / MediaQuery.of(context).size.width),
+                      right: MediaQuery.of(context).size.width *
+                          (60 / MediaQuery.of(context).size.width),
                       child: Transform.rotate(
                           angle: -0.733,
                           child: Image.asset("lib/assets/devil-emoji.png",
-                              height: MediaQuery.of(context).size.width * 0.35))),
+                              height:
+                                  MediaQuery.of(context).size.width * 0.35))),
                 ],
               )),
         ),
@@ -88,9 +117,10 @@ class _RegisterPageState extends State<RegisterPage> {
           child: Container(
             padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.0634),
             decoration: BoxDecoration(
-              color: const Color.fromARGB(255, 255, 255, 255),
-              borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20))
-            ),
+                color: const Color.fromARGB(255, 255, 255, 255),
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    topRight: Radius.circular(20))),
             child: Column(
               children: [
                 Center(
@@ -103,81 +133,119 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
                 SizedBox(height: MediaQuery.of(context).size.width * 0.0483),
                 InputField(
-                  hintText: "Name",
-                  obsecureText: false,
-                  controller: widget._nameController
-                ),
+                    hintText: "Name",
+                    obsecureText: false,
+                    controller: widget._nameController),
                 SizedBox(height: MediaQuery.of(context).size.width * 0.0283),
                 InputField(
-                  hintText: "Email",
-                  obsecureText: false,
-                  controller: widget._emailController
-                ),
+                    hintText: "Email",
+                    obsecureText: false,
+                    controller: widget._emailController),
                 SizedBox(height: MediaQuery.of(context).size.width * 0.0283),
                 InputField(
-                  hintText: "Password",
-                  obsecureText: true,
-                  controller: widget._passwordController
-                ),
+                    hintText: "Password",
+                    obsecureText: true,
+                    controller: widget._passwordController),
                 SizedBox(height: MediaQuery.of(context).size.width * 0.0283),
                 GestureDetector(
                   onTap: () {
-                    if(widget._emailController.text == "" && widget._passwordController.text == "") {
-                      CustomDialog().showCustomDialog(context, "Error", "Enter Email and Password");
-                    } else if(widget._emailController.text.length < 10) {
-                      CustomDialog().showCustomDialog(context, "Email Error", "Enter valid Email address");
-                    } else if(widget._emailController.text != "" && widget._passwordController.text != "") {
-                      registerBloc.add(CheckRegisterEvent(email: widget._emailController.text, password: widget._passwordController.text));
+                    if (widget._emailController.text == "" &&
+                        widget._passwordController.text == "") {
+                      CustomDialog().showCustomDialog(
+                          context, "Error", "Enter Email and Password");
+                    } else if (widget._emailController.text.length < 10) {
+                      CustomDialog().showCustomDialog(
+                          context, "Email Error", "Enter valid Email address");
+                    } else if (widget._emailController.text != "" &&
+                        widget._passwordController.text != "") {
+                      registerBloc.add(CheckRegisterEvent(
+                          email: widget._emailController.text,
+                          password: widget._passwordController.text));
                     }
                   },
                   child: Container(
+                    alignment: Alignment.center,
                       height: MediaQuery.of(context).size.width * 0.135,
                       decoration: BoxDecoration(
                           color: const Color.fromARGB(255, 30, 30, 30),
                           borderRadius: BorderRadius.circular(12)),
                       child: Center(
-                        child: BlocConsumer<RegisterBloc, RegisterState>(
-                          listener: (context, state) async {
-                            if(state is LoadedRegisterState) {
-                              if(state.result.containsKey("result")) {
-                                CustomDialog().showCustomDialog(context, "Invalid", state.result["result"]);
-                              } else {
-                                print("Adding data to Firebase");
-                                await () {
-                                  attendanceBloc.add(UpdateAttendanceEvent(
-                                    data: state.result, 
-                                    reg_no: widget._emailController.text.substring(0,10)
-                                  ));
-                                };
-                                print("Attendance updated");
-                                await () {
-                                  attendanceBloc.add(UpdateUserDetailsEvent(
-                                    reg_no: widget._emailController.text.substring(0,10), 
-                                    password: widget._passwordController.text, 
-                                    name: widget._nameController.text)
-                                  );
-                                };
-                                print("User Details Updated");
+                        child: BlocListener<RegisterBloc, RegisterState>(
+                            listener: (context, state) async {
+                          if (state is LoadedRegisterState) {
+                            if (state.result.containsKey("result")) {
+                              CustomDialog().showCustomDialog(context,
+                                  "Invalid", state.result["result"]);
+                            } else {
+                              attendanceBloc.add(AddAttendanceEvent(
+                                  data: state.result,
+                                  reg_no: widget._emailController.text
+                                      .substring(0, 10)));
+                            }
+                          }
+                        }, child: BlocBuilder<RegisterBloc, RegisterState>(builder: (context, state) {
+                          if (state is LoadingRegisterState) {
+                            return SizedBox(
+                              height:
+                                  MediaQuery.of(context).size.width * 0.065,
+                              width:
+                                  MediaQuery.of(context).size.width * 0.065,
+                              child: CircularProgressIndicator(
+                                  color: Colors.white, strokeWidth: 3),
+                            );
+                          }
+                          return BlocListener<AttendanceBloc,
+                              AttendanceState>(
+                            listener: (context, state) async {
+                              if (state is LoadedAttendanceState &&
+                                  state.result == "done") {
+                                print("calling updateUserDetailsEvent");
+                                attendanceBloc.add(UpdateUserDetailsEvent(
+                                    reg_no: widget._emailController.text
+                                        .substring(0, 10),
+                                    password:
+                                        widget._passwordController.text,
+                                    name: widget._nameController.text));
+                              } else if (state is LoadedAttendanceState &&
+                                  state.result == "both operations done") {
+                                print("Navigating");
+                                await addDataToLS(widget._emailController.text.substring(0,10), widget._passwordController.text, widget._nameController.text);
+                                Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => BottomNavigation()));
+                              } else if (state is LoadedAttendanceState) {
+                                CustomDialog().showCustomDialog(
+                                    context,
+                                    "Oops..",
+                                    "Unable to add the data. Try again");
                               }
-                            }
-                          },
-                          builder: (context, state) {
-                            if(state is EcapValidationLoadingRegisterState || state is RegisterValidationLoadingState) {
-                              return SizedBox(
-                                height: MediaQuery.of(context).size.width * 0.065,
-                                width: MediaQuery.of(context).size.width * 0.065,
-                                child: CircularProgressIndicator(
-                                    color: Colors.white, strokeWidth: 3),
-                              );
-                            }
-                            return Text("Sign up",
-                            style: GoogleFonts.poppins(
-                              fontSize: MediaQuery.of(context).size.width * 0.0434,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ));
-                          }, 
-                        ),
+                            },
+                            child: BlocBuilder<AttendanceBloc, AttendanceState>(
+                              builder: (context, state) {
+                                if (state is LoadingAttendanceState) {
+                                  return SizedBox(
+                                    height:
+                                        MediaQuery.of(context).size.width * 0.065,
+                                    width:
+                                        MediaQuery.of(context).size.width * 0.065,
+                                    child: CircularProgressIndicator(
+                                        color: Colors.white, strokeWidth: 3),
+                                  );
+                                }
+                                return Text("Sign up",
+                                    style: GoogleFonts.poppins(
+                                      fontSize: MediaQuery.of(context)
+                                              .size
+                                              .width *
+                                          0.0434,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ));
+                              },
+                            ),
+                          );
+                        })),
                       )),
                 ),
                 SizedBox(height: MediaQuery.of(context).size.width * 0.0257),
@@ -187,20 +255,9 @@ class _RegisterPageState extends State<RegisterPage> {
                       color: const Color.fromARGB(255, 52, 52, 52),
                     )),
                 SizedBox(height: MediaQuery.of(context).size.width * 0.0144),
-                BlocListener<AttendanceBloc, AttendanceState>(
-                  listener: (context, state) {
-                    print("Attendance State is loaded");
-                    if(state is LoadedAttendanceState) {
-                      if(state.result == "done") {
-                        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomePage()));
-                      } else {
-                        CustomDialog().showCustomDialog(context, "Oops..", "There is a problem in adding data. Try again");
-                      }
-                    }
-                  },
-                  child: GestureDetector(
+                GestureDetector(
                   onTap: () {
-                     Navigator.pop(context);
+                    Navigator.pop(context);
                   },
                   child: Text("Signin",
                       style: GoogleFonts.poppins(
@@ -208,7 +265,6 @@ class _RegisterPageState extends State<RegisterPage> {
                         fontWeight: FontWeight.w600,
                         color: const Color.fromARGB(255, 21, 21, 21),
                       )),
-                ),
                 ),
               ],
             ),

@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'dart:convert';
 
 import 'package:bloc/bloc.dart';
@@ -14,8 +16,7 @@ class CheckRegisterEvent extends RegisterEvent {
 
 abstract class RegisterState {}
 class InitialRegisterState extends RegisterState {}
-class EcapValidationLoadingRegisterState extends RegisterState {}
-class RegisterValidationLoadingState extends RegisterState{}
+class LoadingRegisterState extends RegisterState {}
 class LoadedRegisterState extends RegisterState {
   Map<String,dynamic> result;
   LoadedRegisterState({required this.result});
@@ -24,7 +25,7 @@ class LoadedRegisterState extends RegisterState {
 class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
   RegisterBloc() : super(InitialRegisterState()) {
     on<CheckRegisterEvent>((event, emit) async {
-      emit(EcapValidationLoadingRegisterState());
+      emit(LoadingRegisterState());
       try {
         print("Calling validation checker");
         Map<String,dynamic> result = await validationChecker(event.email.substring(0,10), event.password);

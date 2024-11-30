@@ -1,17 +1,19 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, avoid_print, use_build_context_synchronously, non_constant_identifier_names
 
 import 'dart:ui';
-
 import 'package:bunkit/bloc/attendance_bloc.dart';
 import 'package:bunkit/bloc/login_bloc.dart';
 import 'package:bunkit/bloc/register_bloc.dart';
 import 'package:bunkit/components/dialog_box.dart';
 import 'package:bunkit/components/input_field.dart';
+import 'package:bunkit/pages/bottom_navigation.dart';
 import 'package:bunkit/pages/home_page.dart';
 import 'package:bunkit/pages/register_page.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -21,6 +23,23 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+
+  Future<void> addDataToLS(String reg_no, String password) async {
+    DocumentSnapshot<Map<String, dynamic>> documentSnapshot = await FirebaseFirestore.instance
+                                                                    .collection("Users")
+                                                                    .doc(reg_no)
+                                                                    .collection("Details")
+                                                                    .doc("UserInfo")
+                                                                    .get();
+    final data = documentSnapshot.data();
+    final String name = data!['name'].toString();
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString("reg_no", reg_no);
+    await prefs.setString("password", password);
+    await prefs.setString("name", name);
+    await prefs.setBool("isLoggedIn", true);
+  }
+
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   @override
@@ -139,14 +158,15 @@ class _LoginPageState extends State<LoginPage> {
                         borderRadius: BorderRadius.circular(12)),
                     child: Center(
                       child: BlocConsumer<LoginBloc, LoginState>(
-                          listener: (context, state) {
+                          listener: (context, state) async {
                         if (state is LoadedLoginState) {
                           print("Loaded State");
                           if (state.result == "valid") {
+                            await addDataToLS(_emailController.text.substring(0,10), _passwordController.text);
                             Navigator.pushReplacement(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => HomePage()));
+                                    builder: (context) => BottomNavigation()));
                           } else {
                             print(state.result);
                             CustomDialog().showCustomDialog(
