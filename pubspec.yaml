@@ -48,6 +48,8 @@ dependencies:
   workmanager: ^0.5.0
   shared_preferences: ^2.1.0
   flashy_tab_bar2: ^0.0.10
+  flutter_advanced_switch: ^3.1.0
+  flutter_svg: ^2.0.16
 
 dev_dependencies:
   flutter_test:

@@ -2,7 +2,6 @@
 
 import 'package:bunkit/bloc/login_bloc.dart';
 import 'package:bunkit/pages/bottom_navigation.dart';
-import 'package:bunkit/pages/home_page.dart';
 import 'package:bunkit/pages/login_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

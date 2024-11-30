@@ -7,7 +7,6 @@ import 'package:bunkit/bloc/register_bloc.dart';
 import 'package:bunkit/components/dialog_box.dart';
 import 'package:bunkit/components/input_field.dart';
 import 'package:bunkit/pages/bottom_navigation.dart';
-import 'package:bunkit/pages/home_page.dart';
 import 'package:bunkit/pages/register_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';

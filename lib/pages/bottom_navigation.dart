@@ -1,5 +1,4 @@
 import 'package:bunkit/pages/home_page.dart';
-import 'package:bunkit/pages/login_page.dart';
 import 'package:bunkit/pages/profile_page.dart';
 import 'package:flashy_tab_bar2/flashy_tab_bar2.dart';
 import 'package:flutter/material.dart';
