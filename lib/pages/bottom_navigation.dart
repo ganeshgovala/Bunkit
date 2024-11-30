@@ -1,6 +1,7 @@
 import 'package:bunkit/pages/home_page.dart';
 import 'package:bunkit/pages/login_page.dart';
 import 'package:bunkit/pages/profile_page.dart';
+import 'package:flashy_tab_bar2/flashy_tab_bar2.dart';
 import 'package:flutter/material.dart';
 
 class BottomNavigation extends StatefulWidget {
@@ -11,19 +12,35 @@ class BottomNavigation extends StatefulWidget {
 }
 
 class _BottomNavigationState extends State<BottomNavigation> {
+  int selectedIndex = 0;
+  List<Widget> pages = [HomePage(), ProfilePage()];
+
   @override
   Widget build(BuildContext context) {
-
-    int selectedIndex = 0;
-    List<Widget> pages = [HomePage(), ProfilePage()];
-
     return Scaffold(
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: selectedIndex,
+      bottomNavigationBar: FlashyTabBar(
+        selectedIndex: selectedIndex,
+        showElevation: true,
+        iconSize: 26,
+        onItemSelected: (index) => setState(() {
+          selectedIndex = index;
+        }),
         items: [
-          BottomNavigationBarItem(icon: Icon(Icons.home_max_outlined), label:"Home"),
-          BottomNavigationBarItem(icon: Icon(Icons.person_2_outlined), label: "Profile"),
-        ]
+            FlashyTabBarItem(
+              icon: Icon(
+                Icons.home,
+                color: const Color.fromARGB(255, 116, 116, 116),
+              ),
+              title: Text('Home', style: TextStyle(color: const Color.fromARGB(255, 24, 24, 24)),),
+            ),
+            FlashyTabBarItem(
+              icon: Icon(
+                Icons.person,
+                color: const Color.fromARGB(255, 116, 116, 116),
+              ),
+              title: Text('Profile', style: TextStyle(color: const Color.fromARGB(255, 24, 24, 24))),
+            ),
+          ],
       ),
       body: pages[selectedIndex],
     );
