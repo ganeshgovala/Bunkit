@@ -53,11 +53,11 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      // home: AttendanceTillNow(),
-      home: BlocProvider(
-        create: (context) => LoginBloc(),
-        child: SplashScreen(),
-      ),
+      home: AttendanceTillNow(reg_no: "23pa1a0577",),
+      // home: BlocProvider(
+      //   create: (context) => LoginBloc(),
+      //   child: SplashScreen(),
+      // ),
     );
   }
 }

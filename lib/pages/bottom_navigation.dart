@@ -24,6 +24,7 @@ class _BottomNavigationState extends State<BottomNavigation> {
         onItemSelected: (index) => setState(() {
           selectedIndex = index;
         }),
+        height: 55,
         items: [
             FlashyTabBarItem(
               icon: Icon(

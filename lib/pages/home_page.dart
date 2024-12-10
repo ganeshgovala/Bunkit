@@ -1,10 +1,16 @@
+import 'dart:convert';
+
+import 'package:bunkit/bloc/attendance_bloc.dart';
 import 'package:bunkit/components/homepage_container.dart';
 import 'package:bunkit/pages/attendance_this_month.dart';
 import 'package:bunkit/pages/attendance_till_now.dart';
 import 'package:bunkit/pages/under_development.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -14,7 +20,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-
   Future<String> getName() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getString("name").toString();
@@ -23,6 +28,69 @@ class _HomePageState extends State<HomePage> {
   Future<String> getRegNo() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getString("reg_no").toString();
+  }
+
+  Future<String> getPassword() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString("password").toString();
+  }
+
+  Future<void> updateData(reg_no, password) async {
+    final url = Uri.parse('https://pythonapi-dtrp.onrender.com/updateData');
+    final Map<String, String> data = {
+      'username': reg_no,
+      'password': password,
+    };
+    final response = await http.post(
+      url,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode(data));
+    if (response.statusCode == 200) {
+      print(response.body);
+      final Map<String, dynamic> result = jsonDecode(response.body);
+      print(result);
+      await FirebaseFirestore.instance
+          .collection("Users")
+          .doc(reg_no)
+          .collection("Attendance")
+          .doc("AttendanceInfo")
+          .set({
+        "till_now": result['message']['till_now'],
+        "till_now_attended": result['message']['till_now_attended'],
+        "this_month": result['message']['this_month'],
+        "this_month_attended": result['message']['this_month_attended'],
+      });
+    }
+    print("COMPLETED");
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    //_initializeData();
+    super.initState();
+  }
+
+  
+
+  Future<void> _initializeData() async {
+    try {
+      final regNo = await getRegNo();
+      final password = await getPassword();
+
+      if (regNo.isNotEmpty && password.isNotEmpty) {
+        await updateData(regNo, password);
+
+        final attendanceBloc = BlocProvider.of<AttendanceBloc>(context);
+        attendanceBloc.add(UpdateAttendanceEvent(reg_no: regNo, password: password));
+      } else {
+        print("Registration number or password not found.");
+      }
+    } catch (e) {
+      print("Error during data initialization: $e");
+    }
   }
 
   @override
@@ -73,17 +141,19 @@ class _HomePageState extends State<HomePage> {
                             top: 80,
                             left: 20,
                             child: FutureBuilder(
-                              future: getName(), 
+                              future: getName(),
                               builder: (context, snapshot) {
-                                return Text(snapshot.hasData ? snapshot.data.toString() : "Friend",
-                                style: GoogleFonts.poppins(
-                                  fontSize: 36,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                ));
+                                return Text(
+                                    snapshot.hasData
+                                        ? snapshot.data.toString()
+                                        : "Friend",
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 36,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ));
                               },
-                            ) 
-                        ),
+                            )),
                         Positioned(
                           top: 135,
                           left: 20,
@@ -117,7 +187,12 @@ class _HomePageState extends State<HomePage> {
                   GestureDetector(
                     onTap: () async {
                       String reg_no = await getRegNo();
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => AttendanceTillNow(reg_no: reg_no,)));
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => AttendanceTillNow(
+                                    reg_no: reg_no,
+                                  )));
                     },
                     child: HomepageContainer(
                         heading: "Till Now",
@@ -127,7 +202,12 @@ class _HomePageState extends State<HomePage> {
                   GestureDetector(
                     onTap: () async {
                       String reg_no = await getRegNo();
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => AttendanceThisMonth(reg_no: reg_no,)));
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => AttendanceThisMonth(
+                                    reg_no: reg_no,
+                                  )));
                     },
                     child: HomepageContainer(
                         heading: "This month",
@@ -142,7 +222,10 @@ class _HomePageState extends State<HomePage> {
                 children: [
                   GestureDetector(
                     onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => UnderDevelopment()));
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => UnderDevelopment()));
                     },
                     child: HomepageContainer(
                         heading: "Marks Store",
@@ -151,7 +234,10 @@ class _HomePageState extends State<HomePage> {
                   ),
                   GestureDetector(
                     onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => UnderDevelopment()));
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => UnderDevelopment()));
                     },
                     child: HomepageContainer(
                         heading: "Bunk-Meter",
@@ -231,17 +317,27 @@ class _HomePageState extends State<HomePage> {
                 children: [
                   GestureDetector(
                     onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => UnderDevelopment()));
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => UnderDevelopment()));
                     },
                     child: HomepageContainer(
-                        heading: "Mid Marks", subHeading: "", image: "thismonth"),
+                        heading: "Mid Marks",
+                        subHeading: "",
+                        image: "thismonth"),
                   ),
                   GestureDetector(
                     onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => UnderDevelopment()));
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => UnderDevelopment()));
                     },
                     child: HomepageContainer(
-                        heading: "Sem Marks", subHeading: "", image: "marksstore"),
+                        heading: "Sem Marks",
+                        subHeading: "",
+                        image: "marksstore"),
                   )
                 ],
               ),
