@@ -1,4 +1,7 @@
 import 'package:bunkit/components/homepage_container.dart';
+import 'package:bunkit/pages/attendance_this_month.dart';
+import 'package:bunkit/pages/attendance_till_now.dart';
+import 'package:bunkit/pages/under_development.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -15,6 +18,11 @@ class _HomePageState extends State<HomePage> {
   Future<String> getName() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getString("name").toString();
+  }
+
+  Future<String> getRegNo() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString("reg_no").toString();
   }
 
   @override
@@ -46,30 +54,30 @@ class _HomePageState extends State<HomePage> {
                       children: [
                         Positioned(
                             bottom: 0,
-                            right: -10,
+                            right: -20,
                             child: Image.asset("lib/assets/main-heading.png",
                                 height: 200)),
                         Positioned(
                           top: 50,
-                          left: 30,
+                          left: 20,
                           child: Text(
                             "Welcome back,",
                             style: GoogleFonts.poppins(
-                              fontSize: 18,
+                              fontSize: 16,
                               fontWeight: FontWeight.w600,
                               color: const Color(0xFFb7b7b7),
                             ),
                           ),
                         ),
                         Positioned(
-                            top: 75,
-                            left: 30,
+                            top: 80,
+                            left: 20,
                             child: FutureBuilder(
                               future: getName(), 
                               builder: (context, snapshot) {
                                 return Text(snapshot.hasData ? snapshot.data.toString() : "Friend",
                                 style: GoogleFonts.poppins(
-                                  fontSize: 40,
+                                  fontSize: 36,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.white,
                                 ));
@@ -78,7 +86,7 @@ class _HomePageState extends State<HomePage> {
                         ),
                         Positioned(
                           top: 135,
-                          left: 30,
+                          left: 20,
                           child: Text(
                             "Let’s keep those grades\nand attendance on track!",
                             style: GoogleFonts.poppins(
@@ -106,28 +114,50 @@ class _HomePageState extends State<HomePage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  HomepageContainer(
-                      heading: "Till Now",
-                      subHeading: "(Apr - Now)",
-                      image: "tillnow"),
-                  HomepageContainer(
-                      heading: "This month",
-                      subHeading: "(November)",
-                      image: "thismonth")
+                  GestureDetector(
+                    onTap: () async {
+                      String reg_no = await getRegNo();
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => AttendanceTillNow(reg_no: reg_no,)));
+                    },
+                    child: HomepageContainer(
+                        heading: "Till Now",
+                        subHeading: "(Dec - Now)",
+                        image: "tillnow"),
+                  ),
+                  GestureDetector(
+                    onTap: () async {
+                      String reg_no = await getRegNo();
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => AttendanceThisMonth(reg_no: reg_no,)));
+                    },
+                    child: HomepageContainer(
+                        heading: "This month",
+                        subHeading: "(November)",
+                        image: "thismonth"),
+                  )
                 ],
               ),
               SizedBox(height: 20),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  HomepageContainer(
-                      heading: "Marks Store",
-                      subHeading: "Sem & Mid",
-                      image: "marksStore"),
-                  HomepageContainer(
-                      heading: "Bunk-Meter",
-                      subHeading: "(November)",
-                      image: "bunkmeter")
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => UnderDevelopment()));
+                    },
+                    child: HomepageContainer(
+                        heading: "Marks Store",
+                        subHeading: "Sem & Mid",
+                        image: "marksStore"),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => UnderDevelopment()));
+                    },
+                    child: HomepageContainer(
+                        heading: "Bunk-Meter",
+                        subHeading: "(November)",
+                        image: "bunkmeter"),
+                  )
                 ],
               ),
               SizedBox(height: 26),
@@ -199,10 +229,20 @@ class _HomePageState extends State<HomePage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  HomepageContainer(
-                      heading: "Mid Marks", subHeading: "", image: "thismonth"),
-                  HomepageContainer(
-                      heading: "Sem Marks", subHeading: "", image: "marksstore")
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => UnderDevelopment()));
+                    },
+                    child: HomepageContainer(
+                        heading: "Mid Marks", subHeading: "", image: "thismonth"),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => UnderDevelopment()));
+                    },
+                    child: HomepageContainer(
+                        heading: "Sem Marks", subHeading: "", image: "marksstore"),
+                  )
                 ],
               ),
               SizedBox(height: 40),
