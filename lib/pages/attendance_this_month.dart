@@ -1,11 +1,14 @@
+import 'package:bunkit/components/attendance.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AttendanceThisMonth extends StatefulWidget {
   final String reg_no;
+  final String password;
   const AttendanceThisMonth({
     required this.reg_no,
+    required this.password,
     super.key,
   });
   @override
@@ -13,6 +16,18 @@ class AttendanceThisMonth extends StatefulWidget {
 }
 
 class _AttendanceThisMonthState extends State<AttendanceThisMonth> {
+  void getThingsDone() {
+    AttendanceMethods()
+        .fetchThisMonthSubWiseData(widget.reg_no, widget.password);
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    getThingsDone();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,10 +37,10 @@ class _AttendanceThisMonthState extends State<AttendanceThisMonth> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: 30),
+              SizedBox(height: 40),
               Row(
                 children: [
-                  SizedBox(width: 20),
+                  SizedBox(width: 14),
                   GestureDetector(
                       onTap: () {
                         Navigator.pop(context);
@@ -40,7 +55,7 @@ class _AttendanceThisMonthState extends State<AttendanceThisMonth> {
                 padding: const EdgeInsets.all(18.0),
                 child: Container(
                   width: MediaQuery.of(context).size.width - 18,
-                  height: 200,
+                  height: 216,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(16),
                     gradient: LinearGradient(
@@ -56,11 +71,11 @@ class _AttendanceThisMonthState extends State<AttendanceThisMonth> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            SizedBox(
-                              height: 10,
-                            ),
+                            // SizedBox(
+                            //   height: 10,
+                            // ),
                             Text(
-                              '  Till Now',
+                              '  This Month',
                               style: TextStyle(
                                 color: Colors.white70,
                                 fontSize: 16,
@@ -78,7 +93,8 @@ class _AttendanceThisMonthState extends State<AttendanceThisMonth> {
                                   if (snapshot.connectionState ==
                                       ConnectionState.waiting) {
                                     return Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Text(
                                           'Loading...',
@@ -99,7 +115,8 @@ class _AttendanceThisMonthState extends State<AttendanceThisMonth> {
                                           child: Text(
                                             'Attended : ' + "Loading...",
                                             style: TextStyle(
-                                              color: Colors.white70,
+                                              color: const Color.fromARGB(
+                                                  255, 255, 255, 255),
                                               fontSize: 14,
                                             ),
                                           ),
@@ -110,7 +127,8 @@ class _AttendanceThisMonthState extends State<AttendanceThisMonth> {
 
                                   if (snapshot.hasError) {
                                     return Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Text(
                                           snapshot.error.toString(),
@@ -131,7 +149,8 @@ class _AttendanceThisMonthState extends State<AttendanceThisMonth> {
                                           child: Text(
                                             'Attended : Error',
                                             style: TextStyle(
-                                              color: const Color.fromARGB(255, 255, 255, 255),
+                                              color: const Color.fromARGB(
+                                                  255, 255, 255, 255),
                                               fontSize: 14,
                                             ),
                                           ),
@@ -142,10 +161,11 @@ class _AttendanceThisMonthState extends State<AttendanceThisMonth> {
                                   final data = snapshot.data;
                                   if (data != null) {
                                     return Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          data["this_month"]+"%",
+                                          data["this_month"] + "%",
                                           style: TextStyle(
                                             color: Colors.white,
                                             fontSize: 60,
@@ -164,7 +184,8 @@ class _AttendanceThisMonthState extends State<AttendanceThisMonth> {
                                             'Attended : ' +
                                                 data["this_month_attended"],
                                             style: TextStyle(
-                                              color: Colors.white70,
+                                              color: const Color.fromARGB(
+                                                  255, 255, 255, 255),
                                               fontSize: 14,
                                             ),
                                           ),
@@ -174,6 +195,32 @@ class _AttendanceThisMonthState extends State<AttendanceThisMonth> {
                                   }
                                   return Text("");
                                 }),
+                                SizedBox(height: 13,),
+                            StreamBuilder(
+                              stream: FirebaseFirestore.instance
+                                  .collection("Users")
+                                  .doc(widget.reg_no)
+                                  .collection("Attendance")
+                                  .doc("lastUpdated")
+                                  .snapshots(),
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return Text("Loading");
+                                }
+                                final data = snapshot.requireData;
+                                if(data.data() != null) {
+                                  return Text(
+                                    "   Last Updated : ${data.data()!['LastUpdated']}", style: 
+                                    GoogleFonts.poppins(
+                                      fontSize: 12,
+                                      color:const Color.fromARGB(255, 187, 187, 187),
+                                    ),
+                                  );
+                                }
+                                return Text("");
+                              },
+                            )
                           ],
                         ),
                       ),
@@ -204,7 +251,7 @@ class _AttendanceThisMonthState extends State<AttendanceThisMonth> {
                     TableRow(
                       children: [
                         Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 8.0),
+                          padding: const EdgeInsets.only(top: 8.0),
                           child: Center(
                             child: Text(
                               'Subject',
@@ -217,7 +264,7 @@ class _AttendanceThisMonthState extends State<AttendanceThisMonth> {
                           ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 8.0),
+                          padding: const EdgeInsets.only(top: 8.0),
                           child: Center(
                             child: Text(
                               'Attended',
@@ -230,7 +277,7 @@ class _AttendanceThisMonthState extends State<AttendanceThisMonth> {
                           ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 8.0),
+                          padding: const EdgeInsets.only(top: 8.0),
                           child: Center(
                             child: Text(
                               'Percentage',
@@ -244,50 +291,127 @@ class _AttendanceThisMonthState extends State<AttendanceThisMonth> {
                         ),
                       ],
                     ),
-                    ...List.generate(7, (index) {
-                      return TableRow(
-                        children: [
-                          Center(
-                            child: Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(vertical: 14.0),
-                              child: Text(
-                                'DMGT',
-                                style: GoogleFonts.poppins(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(14.0),
-                            child: Center(
-                                child: Text(
-                              '24 / 32',
-                              style: GoogleFonts.poppins(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            )),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(14.0),
-                            child: Center(
-                                child: Text(
-                              '96%',
-                              style: GoogleFonts.poppins(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            )),
-                          ),
-                        ],
-                      );
-                    }),
                   ],
                 ),
               ),
+              StreamBuilder(
+                stream: FirebaseFirestore.instance
+                    .collection("Users")
+                    .doc(widget.reg_no)
+                    .collection("Attendance")
+                    .doc("this_month_sub_wise")
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(
+                        child: SizedBox(
+                            height: 20,
+                            width: 20,
+                            child: CircularProgressIndicator(
+                              color: Colors.black,
+                              strokeWidth: 3,
+                            )));
+                  }
+                  if (snapshot.hasError) {
+                    return Text("Error");
+                  }
+                  final data = snapshot.requireData;
+                  print(data);
+                  return SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.5,
+                    child: ListView.builder(
+                        itemCount: data.data()!.length,
+                        itemBuilder: (context, index) {
+                          return Column(
+                            children: [
+                              Row(
+                                children: [
+                                  Container(
+                                    width: MediaQuery.of(context).size.width *
+                                        0.33,
+                                    child: Center(
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 14.0),
+                                        child: Text(
+                                          data.data()!.keys.elementAt(index),
+                                          style: GoogleFonts.poppins(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Container(
+                                    width:
+                                        MediaQuery.of(context).size.width * 0.3,
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(14.0),
+                                      child: Center(
+                                          child: Text(
+                                        data
+                                            .data()!
+                                            .values
+                                            .elementAt(index)
+                                            .toString()
+                                            .substring(
+                                                0,
+                                                data
+                                                    .data()!
+                                                    .values
+                                                    .elementAt(index)
+                                                    .toString()
+                                                    .indexOf(",")),
+                                        style: GoogleFonts.poppins(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      )),
+                                    ),
+                                  ),
+                                  Container(
+                                    width: MediaQuery.of(context).size.width *
+                                        0.26,
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(14.0),
+                                      child: Center(
+                                          child: Text(
+                                        data
+                                            .data()!
+                                            .values
+                                            .elementAt(index)
+                                            .toString()
+                                            .substring(
+                                                data
+                                                        .data()!
+                                                        .values
+                                                        .elementAt(index)
+                                                        .toString()
+                                                        .indexOf(",") +
+                                                    1,
+                                                data
+                                                    .data()!
+                                                    .values
+                                                    .elementAt(index)
+                                                    .toString()
+                                                    .length),
+                                        style: GoogleFonts.poppins(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      )),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Divider(),
+                            ],
+                          );
+                        }),
+                  );
+                },
+              )
             ],
           ),
         ),

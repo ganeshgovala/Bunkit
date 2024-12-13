@@ -35,7 +35,6 @@ class HomepageContainer extends StatelessWidget {
                   style: GoogleFonts.poppins(
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
-                    color: const Color(0xFF232323),
                   ),
                 ),
                 Text(
@@ -43,7 +42,6 @@ class HomepageContainer extends StatelessWidget {
                   style: GoogleFonts.poppins(
                     fontSize: 10,
                     fontWeight: FontWeight.w300,
-                    color: const Color(0xFF232323),
                   ),
                 ),
               ],
@@ -51,7 +49,7 @@ class HomepageContainer extends StatelessWidget {
             Container(
               alignment: Alignment.bottomCenter,
               width: MediaQuery.of(context).size.width / 2.5,
-              child: Image.asset("lib/assets/${image}.png", height: 90),
+              child: Image.asset("lib/assets/${image}", height: 90),
             )
           ],
         ));

@@ -1,15 +1,13 @@
-import 'dart:convert';
-
-import 'package:bunkit/components/attendance.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:http/http.dart' as http;
 
 class AttendanceTillNow extends StatefulWidget {
   final String reg_no;
+  final String password;
   const AttendanceTillNow({
     required this.reg_no,
+    required this.password,
     super.key,
   });
   @override
@@ -17,17 +15,6 @@ class AttendanceTillNow extends StatefulWidget {
 }
 
 class _AttendanceTillNowState extends State<AttendanceTillNow> {
-  void getThingsDone() {
-    AttendanceMethods().fetchSubWiseData("23pa1a0577", "Ganesh@123");
-  }
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    getThingsDone();
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,10 +24,10 @@ class _AttendanceTillNowState extends State<AttendanceTillNow> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              SizedBox(height: 30),
+              SizedBox(height: 40),
               Row(
                 children: [
-                  SizedBox(width: 26),
+                  SizedBox(width: 14),
                   GestureDetector(
                       onTap: () {
                         Navigator.pop(context);
@@ -55,7 +42,7 @@ class _AttendanceTillNowState extends State<AttendanceTillNow> {
                 padding: const EdgeInsets.all(18.0),
                 child: Container(
                   width: MediaQuery.of(context).size.width - 18,
-                  height: 200,
+                  height: 220,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(16),
                     gradient: LinearGradient(
@@ -71,9 +58,6 @@ class _AttendanceTillNowState extends State<AttendanceTillNow> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            SizedBox(
-                              height: 10,
-                            ),
                             Text(
                               '  Till Now',
                               style: TextStyle(
@@ -193,6 +177,35 @@ class _AttendanceTillNowState extends State<AttendanceTillNow> {
                                   }
                                   return Text("");
                                 }),
+                            SizedBox(
+                              height: 13,
+                            ),
+                            StreamBuilder(
+                              stream: FirebaseFirestore.instance
+                                  .collection("Users")
+                                  .doc(widget.reg_no)
+                                  .collection("Attendance")
+                                  .doc("lastUpdated")
+                                  .snapshots(),
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return Text("Loading");
+                                }
+                                final data = snapshot.requireData;
+                                if (data.data() != null) {
+                                  return Text(
+                                    "   Last Updated : ${data.data()!['LastUpdated']}",
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 12,
+                                      color: const Color.fromARGB(
+                                          255, 187, 187, 187),
+                                    ),
+                                  );
+                                }
+                                return Text("");
+                              },
+                            )
                           ],
                         ),
                       ),
@@ -223,7 +236,7 @@ class _AttendanceTillNowState extends State<AttendanceTillNow> {
                     TableRow(
                       children: [
                         Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 8.0),
+                          padding: const EdgeInsets.only(top: 8.0),
                           child: Center(
                             child: Text(
                               'Subject',
@@ -236,7 +249,7 @@ class _AttendanceTillNowState extends State<AttendanceTillNow> {
                           ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 8.0),
+                          padding: const EdgeInsets.only(top: 8.0),
                           child: Center(
                             child: Text(
                               'Attended',
@@ -249,7 +262,7 @@ class _AttendanceTillNowState extends State<AttendanceTillNow> {
                           ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 8.0),
+                          padding: const EdgeInsets.only(top: 8.0),
                           child: Center(
                             child: Text(
                               'Percentage',
@@ -269,21 +282,20 @@ class _AttendanceTillNowState extends State<AttendanceTillNow> {
               StreamBuilder(
                 stream: FirebaseFirestore.instance
                     .collection("Users")
-                    .doc("23pa1a0577")
+                    .doc(widget.reg_no)
                     .collection("Attendance")
                     .doc("till_now_sub_wise")
                     .snapshots(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return Center(
-                      child: SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: CircularProgressIndicator(
-                          color: Colors.black,
-                          strokeWidth: 3,
-                        ))
-                    );
+                        child: SizedBox(
+                            height: 20,
+                            width: 20,
+                            child: CircularProgressIndicator(
+                              color: Colors.black,
+                              strokeWidth: 3,
+                            )));
                   }
                   if (snapshot.hasError) {
                     return Text("Error");
@@ -291,7 +303,7 @@ class _AttendanceTillNowState extends State<AttendanceTillNow> {
                   final data = snapshot.requireData;
                   print(data);
                   return SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.65,
+                    height: MediaQuery.of(context).size.height * 0.5,
                     child: ListView.builder(
                         itemCount: data.data()!.length,
                         itemBuilder: (context, index) {
@@ -300,7 +312,8 @@ class _AttendanceTillNowState extends State<AttendanceTillNow> {
                               Row(
                                 children: [
                                   Container(
-                                    width:MediaQuery.of(context).size.width * 0.33,
+                                    width: MediaQuery.of(context).size.width *
+                                        0.33,
                                     child: Center(
                                       child: Padding(
                                         padding: const EdgeInsets.symmetric(
@@ -316,7 +329,8 @@ class _AttendanceTillNowState extends State<AttendanceTillNow> {
                                     ),
                                   ),
                                   Container(
-                                    width:MediaQuery.of(context).size.width * 0.3,
+                                    width:
+                                        MediaQuery.of(context).size.width * 0.3,
                                     child: Padding(
                                       padding: const EdgeInsets.all(14.0),
                                       child: Center(
@@ -342,7 +356,8 @@ class _AttendanceTillNowState extends State<AttendanceTillNow> {
                                     ),
                                   ),
                                   Container(
-                                    width:MediaQuery.of(context).size.width * 0.26,
+                                    width: MediaQuery.of(context).size.width *
+                                        0.26,
                                     child: Padding(
                                       padding: const EdgeInsets.all(14.0),
                                       child: Center(

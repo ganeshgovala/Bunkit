@@ -17,6 +17,11 @@ class ProfilePage extends StatelessWidget {
       return prefs.getString("name").toString();
     }
 
+    Future<String> getRegNo() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString("reg_no").toString();
+  }
+
     return Scaffold(
       backgroundColor: Colors.white,
         body: Padding(
@@ -57,12 +62,17 @@ class ProfilePage extends StatelessWidget {
                               },
                             ),
                       SizedBox(height: 2),
-                      Text("23PA1A0577 - CSE",
-                          style: GoogleFonts.poppins(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                            color: const Color.fromARGB(255, 57, 57, 57),
-                          ))
+                      FutureBuilder(
+                              future: getRegNo(), 
+                              builder: (context, snapshot) {
+                                return Text(snapshot.hasData ? snapshot.data.toString() : "Unknown",
+                                style: GoogleFonts.poppins(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                  color: const Color.fromARGB(255, 57, 57, 57),
+                                ));
+                              },
+                            ),
                     ],
                   ),
                 )

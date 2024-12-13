@@ -4,6 +4,7 @@ import 'dart:ui';
 
 import 'package:bunkit/bloc/attendance_bloc.dart';
 import 'package:bunkit/bloc/register_bloc.dart';
+import 'package:bunkit/components/attendance.dart';
 import 'package:bunkit/components/dialog_box.dart';
 import 'package:bunkit/components/input_field.dart';
 import 'package:bunkit/pages/bottom_navigation.dart';
@@ -209,6 +210,8 @@ class _RegisterPageState extends State<RegisterPage> {
                                   state.result == "both operations done") {
                                 print("Navigating");
                                 await addDataToLS(widget._emailController.text.substring(0,10), widget._passwordController.text, widget._nameController.text);
+                                await AttendanceMethods().fetchThisMonthSubWiseData(widget._emailController.text.substring(0,10), widget._passwordController.text);
+                                await AttendanceMethods().fetchTillNowSubWiseData(widget._emailController.text.substring(0,10), widget._passwordController.text);
                                 Navigator.pushReplacement(
                                     context,
                                     MaterialPageRoute(

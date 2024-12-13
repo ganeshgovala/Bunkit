@@ -2,7 +2,6 @@ import 'package:bunkit/components/dialog_box.dart';
 import 'package:bunkit/pages/add_collection.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class MarksStore extends StatelessWidget {

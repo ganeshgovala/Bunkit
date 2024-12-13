@@ -1,16 +1,15 @@
-import 'dart:convert';
-
 import 'package:bunkit/bloc/attendance_bloc.dart';
+import 'package:bunkit/components/attendance.dart';
 import 'package:bunkit/components/homepage_container.dart';
+import 'package:bunkit/components/text_styles.dart';
 import 'package:bunkit/pages/attendance_this_month.dart';
 import 'package:bunkit/pages/attendance_till_now.dart';
 import 'package:bunkit/pages/under_development.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:http/http.dart' as http;
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -35,56 +34,24 @@ class _HomePageState extends State<HomePage> {
     return prefs.getString("password").toString();
   }
 
-  Future<void> updateData(reg_no, password) async {
-    final url = Uri.parse('https://pythonapi-dtrp.onrender.com/updateData');
-    final Map<String, String> data = {
-      'username': reg_no,
-      'password': password,
-    };
-    final response = await http.post(
-      url,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode(data));
-    if (response.statusCode == 200) {
-      print(response.body);
-      final Map<String, dynamic> result = jsonDecode(response.body);
-      print(result);
-      await FirebaseFirestore.instance
-          .collection("Users")
-          .doc(reg_no)
-          .collection("Attendance")
-          .doc("AttendanceInfo")
-          .set({
-        "till_now": result['message']['till_now'],
-        "till_now_attended": result['message']['till_now_attended'],
-        "this_month": result['message']['this_month'],
-        "this_month_attended": result['message']['this_month_attended'],
-      });
-    }
-    print("COMPLETED");
-  }
-
   @override
   void initState() {
     // TODO: implement initState
-    //_initializeData();
+    _initializeData();
     super.initState();
   }
-
-  
 
   Future<void> _initializeData() async {
     try {
       final regNo = await getRegNo();
       final password = await getPassword();
-
       if (regNo.isNotEmpty && password.isNotEmpty) {
-        await updateData(regNo, password);
-
+        await AttendanceMethods().updateData(regNo, password);
+        await AttendanceMethods().fetchTillNowSubWiseData(regNo, password);
+        await AttendanceMethods().fetchThisMonthSubWiseData(regNo, password);
         final attendanceBloc = BlocProvider.of<AttendanceBloc>(context);
-        attendanceBloc.add(UpdateAttendanceEvent(reg_no: regNo, password: password));
+        attendanceBloc
+            .add(UpdateAttendanceEvent(reg_no: regNo, password: password));
       } else {
         print("Registration number or password not found.");
       }
@@ -174,11 +141,7 @@ class _HomePageState extends State<HomePage> {
               SizedBox(height: 26),
               Text(
                 "Attendance",
-                style: GoogleFonts.poppins(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w700,
-                  color: const Color(0xFF232323),
-                ),
+                style: TextStyles().heading(context),
               ),
               SizedBox(height: 20),
               Row(
@@ -187,32 +150,34 @@ class _HomePageState extends State<HomePage> {
                   GestureDetector(
                     onTap: () async {
                       String reg_no = await getRegNo();
+                      String password = await getPassword();
                       Navigator.push(
                           context,
                           MaterialPageRoute(
                               builder: (context) => AttendanceTillNow(
-                                    reg_no: reg_no,
-                                  )));
+                                  reg_no: reg_no, password: password)));
                     },
                     child: HomepageContainer(
                         heading: "Till Now",
                         subHeading: "(Dec - Now)",
-                        image: "tillnow"),
+                        image: "tillnow.png"),
                   ),
                   GestureDetector(
                     onTap: () async {
                       String reg_no = await getRegNo();
+                      String password = await getPassword();
                       Navigator.push(
                           context,
                           MaterialPageRoute(
                               builder: (context) => AttendanceThisMonth(
                                     reg_no: reg_no,
+                                    password: password,
                                   )));
                     },
                     child: HomepageContainer(
                         heading: "This month",
                         subHeading: "(November)",
-                        image: "thismonth"),
+                        image: "thismonth.png"),
                   )
                 ],
               ),
@@ -227,10 +192,50 @@ class _HomePageState extends State<HomePage> {
                           MaterialPageRoute(
                               builder: (context) => UnderDevelopment()));
                     },
-                    child: HomepageContainer(
-                        heading: "Marks Store",
-                        subHeading: "Sem & Mid",
-                        image: "marksStore"),
+                    child: Container(
+                        height: MediaQuery.of(context).size.width / 2.3,
+                        width: MediaQuery.of(context).size.width / 2.4,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(16),
+                          gradient: LinearGradient(
+                              colors: [
+                                const Color(0xFFe0e0e0),
+                                Colors.white,
+                              ],
+                              begin: Alignment.bottomCenter,
+                              end: Alignment.topCenter),
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            SizedBox(height: 10),
+                            Column(
+                              children: [
+                                Text(
+                                  "Marks Store",
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                                Text(
+                                  "mid & sem",
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w300,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Container(
+                                alignment: Alignment.bottomCenter,
+                                width: MediaQuery.of(context).size.width / 2.5,
+                                child: Image.asset(
+                                  "lib/assets/bunkmeter.png",
+                                  height: 90,
+                                ))
+                          ],
+                        )),
                   ),
                   GestureDetector(
                     onTap: () {
@@ -240,20 +245,16 @@ class _HomePageState extends State<HomePage> {
                               builder: (context) => UnderDevelopment()));
                     },
                     child: HomepageContainer(
-                        heading: "Bunk-Meter",
-                        subHeading: "(November)",
-                        image: "bunkmeter"),
-                  )
+                        heading: "Bunkit",
+                        subHeading: "Sem & Mid",
+                        image: "marksstore.png"),
+                  ),
                 ],
               ),
               SizedBox(height: 26),
               Text(
                 "Marks Calculator",
-                style: GoogleFonts.poppins(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w700,
-                  color: const Color(0xFF232323),
-                ),
+                style: TextStyles().heading(context),
               ),
               SizedBox(height: 20),
               Container(
@@ -325,7 +326,7 @@ class _HomePageState extends State<HomePage> {
                     child: HomepageContainer(
                         heading: "Mid Marks",
                         subHeading: "",
-                        image: "thismonth"),
+                        image: "thismonth.png"),
                   ),
                   GestureDetector(
                     onTap: () {
@@ -337,7 +338,7 @@ class _HomePageState extends State<HomePage> {
                     child: HomepageContainer(
                         heading: "Sem Marks",
                         subHeading: "",
-                        image: "marksstore"),
+                        image: "bunkmeter.png"),
                   )
                 ],
               ),
