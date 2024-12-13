@@ -23,7 +23,7 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
-
+  bool isChecked=false;
   Future<void> addDataToLS(String reg_no, String password, String name) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString("reg_no", reg_no);
@@ -146,6 +146,24 @@ class _RegisterPageState extends State<RegisterPage> {
                     obsecureText: true,
                     controller: widget._passwordController),
                 SizedBox(height: MediaQuery.of(context).size.width * 0.0283),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: CheckboxListTile( 
+                    contentPadding: EdgeInsets.all(0),
+                    title: Text('I Agree to Terms and Conditions',
+                                style: GoogleFonts.poppins()),                
+                    value: isChecked, 
+                    onChanged: (bool? value) {
+                       setState(() {
+                          isChecked = value ?? false;
+                       });
+                    },
+                    activeColor: Colors.black,
+                     checkColor: Colors.white,               
+                    controlAffinity: ListTileControlAffinity.leading,
+                  ),
+                ),
+
                 GestureDetector(
                   onTap: () {
                     if (widget._emailController.text == "" &&
