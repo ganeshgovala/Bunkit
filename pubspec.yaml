@@ -51,6 +51,7 @@ dependencies:
   flutter_advanced_switch: ^3.1.0
   flutter_svg: ^2.0.16
   flutter_launcher_icons: ^0.13.1
+  bottom_picker: ^2.9.0
 
 flutter_icons:
   android: true

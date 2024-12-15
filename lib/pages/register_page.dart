@@ -24,7 +24,7 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
-  bool isChecked=false;
+  bool isChecked = false;
   Future<void> addDataToLS(String reg_no, String password, String name) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString("reg_no", reg_no);
@@ -149,28 +149,43 @@ class _RegisterPageState extends State<RegisterPage> {
                 SizedBox(height: MediaQuery.of(context).size.width * 0.0283),
                 Align(
                   alignment: Alignment.centerLeft,
-                  child: CheckboxListTile( 
+                  child: CheckboxListTile(
                     contentPadding: EdgeInsets.all(0),
-                    title: Text('I Agree to Terms and Conditions',
-                                style: GoogleFonts.poppins()),                
-                    value: isChecked, 
+                    title: Row(
+                      children: [
+                        Text('I Agree to ',
+                            style: GoogleFonts.poppins(
+                              fontSize: MediaQuery.of(context).size.width * 0.0384,
+                              color: const Color.fromARGB(255, 52, 52, 52),
+                            )),
+                        Text('Terms and Conditions',
+                            style: GoogleFonts.poppins(
+                              fontSize: MediaQuery.of(context).size.width * 0.0384,
+                              fontWeight: FontWeight.w600,
+                              color: const Color.fromARGB(255, 22, 22, 22),
+                            )),
+                      ],
+                    ),
+                    value: isChecked,
                     onChanged: (bool? value) {
-                       setState(() {
-                          isChecked = value ?? false;
-                       });
+                      setState(() {
+                        isChecked = value ?? false;
+                      });
                     },
                     activeColor: Colors.black,
-                     checkColor: Colors.white,               
+                    checkColor: Colors.white,
                     controlAffinity: ListTileControlAffinity.leading,
                   ),
                 ),
-
                 GestureDetector(
                   onTap: () {
                     if (widget._emailController.text == "" &&
                         widget._passwordController.text == "") {
                       CustomDialog().showCustomDialog(
                           context, "Error", "Enter Email and Password");
+                    } else if (isChecked == false) {
+                      CustomDialog().showCustomDialog(
+                          context, "Error", "Accept Terms & Conditions");
                     } else if (widget._emailController.text.length < 10) {
                       CustomDialog().showCustomDialog(
                           context, "Email Error", "Enter valid Email address");
@@ -182,7 +197,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     }
                   },
                   child: Container(
-                    alignment: Alignment.center,
+                      alignment: Alignment.center,
                       height: MediaQuery.of(context).size.width * 0.135,
                       decoration: BoxDecoration(
                           color: const Color.fromARGB(255, 30, 30, 30),
@@ -192,8 +207,8 @@ class _RegisterPageState extends State<RegisterPage> {
                             listener: (context, state) async {
                           if (state is LoadedRegisterState) {
                             if (state.result.containsKey("result")) {
-                              CustomDialog().showCustomDialog(context,
-                                  "Invalid", state.result["result"]);
+                              CustomDialog().showCustomDialog(
+                                  context, "Invalid", state.result["result"]);
                             } else {
                               attendanceBloc.add(AddAttendanceEvent(
                                   data: state.result,
@@ -201,19 +216,17 @@ class _RegisterPageState extends State<RegisterPage> {
                                       .substring(0, 10)));
                             }
                           }
-                        }, child: BlocBuilder<RegisterBloc, RegisterState>(builder: (context, state) {
+                        }, child: BlocBuilder<RegisterBloc, RegisterState>(
+                                builder: (context, state) {
                           if (state is LoadingRegisterState) {
                             return SizedBox(
-                              height:
-                                  MediaQuery.of(context).size.width * 0.065,
-                              width:
-                                  MediaQuery.of(context).size.width * 0.065,
+                              height: MediaQuery.of(context).size.width * 0.065,
+                              width: MediaQuery.of(context).size.width * 0.065,
                               child: CircularProgressIndicator(
                                   color: Colors.white, strokeWidth: 3),
                             );
                           }
-                          return BlocListener<AttendanceBloc,
-                              AttendanceState>(
+                          return BlocListener<AttendanceBloc, AttendanceState>(
                             listener: (context, state) async {
                               if (state is LoadedAttendanceState &&
                                   state.result == "done") {
@@ -221,19 +234,31 @@ class _RegisterPageState extends State<RegisterPage> {
                                 attendanceBloc.add(UpdateUserDetailsEvent(
                                     reg_no: widget._emailController.text
                                         .substring(0, 10),
-                                    password:
-                                        widget._passwordController.text,
+                                    password: widget._passwordController.text,
                                     name: widget._nameController.text));
                               } else if (state is LoadedAttendanceState &&
                                   state.result == "both operations done") {
                                 print("Navigating");
-                                await addDataToLS(widget._emailController.text.substring(0,10), widget._passwordController.text, widget._nameController.text);
-                                await AttendanceMethods().fetchThisMonthSubWiseData(widget._emailController.text.substring(0,10), widget._passwordController.text);
-                                await AttendanceMethods().fetchTillNowSubWiseData(widget._emailController.text.substring(0,10), widget._passwordController.text);
+                                await addDataToLS(
+                                    widget._emailController.text
+                                        .substring(0, 10),
+                                    widget._passwordController.text,
+                                    widget._nameController.text);
+                                await AttendanceMethods()
+                                    .fetchThisMonthSubWiseData(
+                                        widget._emailController.text
+                                            .substring(0, 10),
+                                        widget._passwordController.text);
+                                await AttendanceMethods()
+                                    .fetchTillNowSubWiseData(
+                                        widget._emailController.text
+                                            .substring(0, 10),
+                                        widget._passwordController.text);
                                 Navigator.pushReplacement(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) => BottomNavigation()));
+                                        builder: (context) =>
+                                            BottomNavigation()));
                               } else if (state is LoadedAttendanceState) {
                                 CustomDialog().showCustomDialog(
                                     context,
@@ -245,20 +270,19 @@ class _RegisterPageState extends State<RegisterPage> {
                               builder: (context, state) {
                                 if (state is LoadingAttendanceState) {
                                   return SizedBox(
-                                    height:
-                                        MediaQuery.of(context).size.width * 0.065,
-                                    width:
-                                        MediaQuery.of(context).size.width * 0.065,
+                                    height: MediaQuery.of(context).size.width *
+                                        0.065,
+                                    width: MediaQuery.of(context).size.width *
+                                        0.065,
                                     child: CircularProgressIndicator(
                                         color: Colors.white, strokeWidth: 3),
                                   );
                                 }
                                 return Text("Sign up",
                                     style: GoogleFonts.poppins(
-                                      fontSize: MediaQuery.of(context)
-                                              .size
-                                              .width *
-                                          0.0434,
+                                      fontSize:
+                                          MediaQuery.of(context).size.width *
+                                              0.0434,
                                       fontWeight: FontWeight.bold,
                                       color: Colors.white,
                                     ));

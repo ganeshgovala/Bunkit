@@ -3,6 +3,7 @@
 import 'package:bunkit/bloc/login_bloc.dart';
 import 'package:bunkit/components/attendance.dart';
 import 'package:bunkit/firebase_options.dart';
+import 'package:bunkit/pages/profile_page.dart';
 import 'package:bunkit/pages/splash_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -39,7 +40,7 @@ void main() async {
   if (!kIsWeb) {
     Workmanager().initialize(
       callbackDispatcher,
-      isInDebugMode: false,
+      isInDebugMode: true,
     );
 
     Workmanager().registerPeriodicTask(
@@ -47,7 +48,7 @@ void main() async {
       "Attendance Refreshed",
       frequency: const Duration(hours: 1),
       initialDelay: calculateInitialDelay(),
-      constraints: Constraints(networkType: NetworkType.connected),
+      //constraints: Constraints(networkType: NetworkType.connected),
     );
   }
   runApp(MyApp());
@@ -60,18 +61,18 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      // home: AttendanceTillNow(reg_no: "23pa1a0577",),
-      home: BlocProvider(
-        create: (context) => LoginBloc(),
-        child: SplashScreen(),
-      ),
+      home: ProfilePage(),
+      // home: BlocProvider(
+      //   create: (context) => LoginBloc(),
+      //   child: SplashScreen(),
+      // ),
     );
   }
 }
 
 Duration calculateInitialDelay() {
   DateTime now = DateTime.now();
-  DateTime ninePM = DateTime(now.year, now.month, now.day, 9, 00, 00);
+  DateTime ninePM = DateTime(now.year, now.month, now.day, 12, 00, 00);
   if (now.isAfter(ninePM)) {
     ninePM = ninePM.add(Duration(hours: 1));
   }

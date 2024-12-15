@@ -22,10 +22,10 @@ class AttendanceMethods {
       Map<String,dynamic> attendance = {};
       for(int i = 0; i < data.length; i++) {
         if(data[i][0] == "FSD") {
-          attendance[data[i][0]] = data[i][3] +"/"+data[i][4]+","+data[i][5];
+          attendance[data[i][0]] = data[i][3] +"/"+data[i][5]+","+data[i][4];
         }
         else {
-          attendance[data[i][0]] = data[i][1] +"/"+data[i][2]+","+data[i][3];
+          attendance[data[i][0]] = data[i][1] +"/"+data[i][3]+","+data[i][2];
         }
       }
       print(attendance);
@@ -59,10 +59,11 @@ class AttendanceMethods {
       Map<String,dynamic> attendance = {};
       for(int i = 0; i < data.length; i++) {
         if(data[i][0] == "FSD") {
-          attendance[data[i][0]] = data[i][3] +"/"+data[i][4]+","+data[i][5];
+          attendance[data[i][0]] = data[i][3] +"/"+data[i][5]+","+data[i][4];
         }
         else {
-          attendance[data[i][0]] = data[i][1] +"/"+data[i][2]+","+data[i][3];
+          
+          attendance[data[i][0]] = data[i][1] +"/"+data[i][3]+","+data[i][2];
         }
       }
       print(attendance);
