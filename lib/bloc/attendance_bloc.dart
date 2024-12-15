@@ -65,6 +65,7 @@ class AttendanceBloc extends Bloc<AttendanceEvent, AttendanceState> {
           'reg_no': reg_no,
           'password': password,
           'name': name,
+          'target': 85,
         }
       );
       return 'both operations done';

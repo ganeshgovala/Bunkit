@@ -1,36 +1,48 @@
+import 'dart:async';
+
 import 'package:bottom_picker/bottom_picker.dart';
-import 'package:bottom_picker/resources/arrays.dart';
 import 'package:bunkit/auth/auth_service.dart';
 import 'package:bunkit/components/profilepage_component.dart';
 import 'package:bunkit/pages/splash_screen.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class ProfilePage extends StatelessWidget {
+class ProfilePage extends StatefulWidget {
   ProfilePage({super.key});
 
   @override
+  State<ProfilePage> createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
+  int target = 0;
+  @override
   Widget build(BuildContext context) {
     List<Widget> items = [];
-    for(int i = 75; i <= 100; i++) {
+    for (int i = 75; i <= 100; i++) {
       items.add(Padding(
-        padding: const EdgeInsets.only(top:8.0),
+        padding: const EdgeInsets.only(top: 8.0),
         child: Text(i.toString()),
       ));
     }
-    void show() {
+    Future<void> show(context) async {
+      final completer = Completer<void>();
       BottomPicker(
         items: items,
         pickerTitle: Padding(
           padding: const EdgeInsets.all(10.0),
-          child: Center(child: Text('Choose Target', style: TextStyle(
-            fontSize: 24,
-            color: Colors.black,
-            fontWeight: FontWeight.w600,
-          ),)),
+          child: Center(
+              child: Text(
+            'Choose Target',
+            style: TextStyle(
+              fontSize: 24,
+              color: Colors.black,
+              fontWeight: FontWeight.w600,
+            ),
+          )),
         ),
         titleAlignment: Alignment.center,
         pickerTextStyle: TextStyle(
@@ -44,9 +56,28 @@ class ProfilePage extends StatelessWidget {
         ),
         closeIconColor: const Color.fromARGB(255, 19, 19, 19),
         onSubmit: (p0) {
-          print(p0+75);
+          setState(() {
+            target = p0+75;
+          });
+          return completer.complete();
         },
       ).show(context);
+      return completer.future;
+    }
+
+    Future<void> updateTarget(int target, String reg_no) async {
+      try {
+        await FirebaseFirestore.instance
+            .collection("Users")
+            .doc(reg_no)
+            .collection('Details')
+            .doc('UserInfo')
+            .update({
+          'target': target,
+        });
+      } on FirebaseException catch (e) {
+        print(e.message);
+      }
     }
 
     Future<String> getName() async {
@@ -133,7 +164,12 @@ class ProfilePage extends StatelessWidget {
                     height: 4, color: const Color.fromARGB(255, 107, 107, 107)),
                 SizedBox(height: 22),
                 GestureDetector(
-                  onTap: show,
+                  onTap: () async {
+                    await show(context);
+                    String reg_no = await getRegNo();
+                    await updateTarget(target, reg_no);
+                    print("updated with target $target");
+                  },
                   child: ProfilepageComponent(
                       name: "Change Attendance Target",
                       image: "Chield_check",
