@@ -94,9 +94,9 @@ class _BunkMeterState extends State<BunkMeter> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: const Color.fromARGB(255, 238, 238, 238),
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: const Color.fromARGB(255, 238, 238, 238),
       ),
       body: Column(
         children: [
