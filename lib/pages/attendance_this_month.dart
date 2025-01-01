@@ -294,123 +294,128 @@ class _AttendanceThisMonthState extends State<AttendanceThisMonth> {
                   ],
                 ),
               ),
-              StreamBuilder(
-                stream: FirebaseFirestore.instance
-                    .collection("Users")
-                    .doc(widget.reg_no)
-                    .collection("Attendance")
-                    .doc("this_month_sub_wise")
-                    .snapshots(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Center(
-                        child: SizedBox(
-                            height: 20,
-                            width: 20,
-                            child: CircularProgressIndicator(
-                              color: Colors.black,
-                              strokeWidth: 3,
-                            )));
-                  }
-                  if (snapshot.hasError) {
-                    return Text("Error");
-                  }
-                  final data = snapshot.requireData;
-                  print(data);
-                  return SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.5,
-                    child: ListView.builder(
-                        itemCount: data.data()!.length,
-                        itemBuilder: (context, index) {
-                          return Column(
-                            children: [
-                              Row(
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                child: Container(
+                  child: StreamBuilder(
+                    stream: FirebaseFirestore.instance
+                        .collection("Users")
+                        .doc(widget.reg_no)
+                        .collection("Attendance")
+                        .doc("this_month_sub_wise")
+                        .snapshots(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Center(
+                            child: SizedBox(
+                                height: 20,
+                                width: 20,
+                                child: CircularProgressIndicator(
+                                  color: Colors.black,
+                                  strokeWidth: 3,
+                                )));
+                      }
+                      if (snapshot.hasError) {
+                        return Text("Error");
+                      }
+                      final data = snapshot.requireData;
+                      print(data);
+                      return SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.5,
+                        child: ListView.builder(
+                            itemCount: data.data()!.length,
+                            itemBuilder: (context, index) {
+                              return Column(
                                 children: [
-                                  Container(
-                                    width: MediaQuery.of(context).size.width *
-                                        0.33,
-                                    child: Center(
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 14.0),
-                                        child: Text(
-                                          data.data()!.keys.elementAt(index),
-                                          style: GoogleFonts.poppins(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.w500,
+                                  Row(
+                                    children: [
+                                      Container(
+                                        width: MediaQuery.of(context).size.width *
+                                            0.33,
+                                        child: Center(
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                vertical: 14.0),
+                                            child: Text(
+                                              data.data()!.keys.elementAt(index),
+                                              style: GoogleFonts.poppins(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
                                           ),
                                         ),
                                       ),
-                                    ),
-                                  ),
-                                  Container(
-                                    width:
-                                        MediaQuery.of(context).size.width * 0.3,
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(14.0),
-                                      child: Center(
-                                          child: Text(
-                                        data
-                                            .data()!
-                                            .values
-                                            .elementAt(index)
-                                            .toString()
-                                            .substring(
-                                                0,
-                                                data
-                                                    .data()!
-                                                    .values
-                                                    .elementAt(index)
-                                                    .toString()
-                                                    .indexOf(",")),
-                                        style: GoogleFonts.poppins(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      )),
-                                    ),
-                                  ),
-                                  Container(
-                                    width: MediaQuery.of(context).size.width *
-                                        0.26,
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(14.0),
-                                      child: Center(
-                                          child: Text(
-                                        data
-                                            .data()!
-                                            .values
-                                            .elementAt(index)
-                                            .toString()
-                                            .substring(
-                                                data
+                                      Container(
+                                        width:
+                                            MediaQuery.of(context).size.width * 0.3,
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(14.0),
+                                          child: Center(
+                                              child: Text(
+                                            data
+                                                .data()!
+                                                .values
+                                                .elementAt(index)
+                                                .toString()
+                                                .substring(
+                                                    0,
+                                                    data
                                                         .data()!
                                                         .values
                                                         .elementAt(index)
                                                         .toString()
-                                                        .indexOf(",") +
-                                                    1,
-                                                data
-                                                    .data()!
-                                                    .values
-                                                    .elementAt(index)
-                                                    .toString()
-                                                    .length),
-                                        style: GoogleFonts.poppins(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w500,
+                                                        .indexOf(",")),
+                                            style: GoogleFonts.poppins(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          )),
                                         ),
-                                      )),
-                                    ),
+                                      ),
+                                      Container(
+                                        width: MediaQuery.of(context).size.width *
+                                            0.26,
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(14.0),
+                                          child: Center(
+                                              child: Text(
+                                            data
+                                                .data()!
+                                                .values
+                                                .elementAt(index)
+                                                .toString()
+                                                .substring(
+                                                    data
+                                                            .data()!
+                                                            .values
+                                                            .elementAt(index)
+                                                            .toString()
+                                                            .indexOf(",") +
+                                                        1,
+                                                    data
+                                                        .data()!
+                                                        .values
+                                                        .elementAt(index)
+                                                        .toString()
+                                                        .length),
+                                            style: GoogleFonts.poppins(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          )),
+                                        ),
+                                      ),
+                                    ],
                                   ),
+                                  Divider(),
                                 ],
-                              ),
-                              Divider(),
-                            ],
-                          );
-                        }),
-                  );
-                },
+                              );
+                            }),
+                      );
+                    },
+                  ),
+                ),
               )
             ],
           ),

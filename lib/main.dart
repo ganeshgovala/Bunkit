@@ -3,8 +3,6 @@
 import 'package:bunkit/bloc/login_bloc.dart';
 import 'package:bunkit/components/attendance.dart';
 import 'package:bunkit/firebase_options.dart';
-import 'package:bunkit/pages/bunk_meter.dart';
-import 'package:bunkit/pages/profile_page.dart';
 import 'package:bunkit/pages/splash_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';

@@ -1,3 +1,4 @@
+import 'package:bunkit/components/bunk_meter_component.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -11,16 +12,10 @@ class BunkMeter extends StatefulWidget {
 }
 
 class _BunkMeterState extends State<BunkMeter> {
-
-  Future<int> getBunkableClasses() async {
-    String reg_no = await getRegNo();
-    return calculate(reg_no);
-  }
-
-  Future<int> calculate(String reg_no) async {
+  Future<int> calculate() async {
     int target = await getTarget();
     int workingDays = await getWorkingDays();
-    int missed = await attendedClasses(reg_no);
+    int missed = await attendedClasses();
     int workingHours = workingDays * 8;
     int bunkablePeriods = (workingHours * (target / 100)).floor();
     // print("Target : $target" + " workingHours : $workingHours");
@@ -30,7 +25,8 @@ class _BunkMeterState extends State<BunkMeter> {
     return workingHours - bunkablePeriods - missed;
   }
 
-  Future<int> attendedClasses(String reg_no) async {
+  Future<int> attendedClasses() async {
+    String reg_no = await getRegNo();
     DocumentSnapshot<Map<String, dynamic>> documentSnapshot =
         await FirebaseFirestore.instance
             .collection("Users")
@@ -80,7 +76,20 @@ class _BunkMeterState extends State<BunkMeter> {
     return prefs.getString("reg_no").toString();
   }
 
-  List<String> months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+  List<String> months = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December"
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -91,59 +100,137 @@ class _BunkMeterState extends State<BunkMeter> {
       ),
       body: Column(
         children: [
-          Container(
-            height: 200,
-            child: Column(
-              children: [
-                Center(
-                  child: Text(
-                    months[DateTime.now().month - 1],
-                    style: GoogleFonts.poppins(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w300,
-                      color: const Color.fromARGB(255, 102, 102, 102),
+          SizedBox(height: 20),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20.0),
+            child: Container(
+              padding: EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(30),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color.fromARGB(63, 0, 0, 0),
+                      blurRadius: 20,
+                      blurStyle: BlurStyle.normal,
+                    )
+                  ]),
+              height: 228,
+              child: Column(
+                children: [
+                  Center(
+                    child: Text(
+                      months[DateTime.now().month - 1],
+                      style: GoogleFonts.poppins(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w300,
+                        color: const Color.fromARGB(255, 102, 102, 102),
+                      ),
                     ),
                   ),
-                ),
-                FutureBuilder(
-                  future: getBunkableClasses(),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Column(
-                        children: [
-                          SizedBox(height: 45),
-                          Center(
-                            child: CircularProgressIndicator(
-                              color: const Color.fromARGB(255, 36, 36, 36),
-                            ),
-                          ),
-                        ],
-                      );
-                    }
-                    final data = snapshot.requireData;
-                    return Center(
-                      child: Text(
-                        data.toString(),
-                        style: GoogleFonts.poppins(
-                          fontSize: 102,
-                          fontWeight: FontWeight.w600,
-                          color: const Color.fromARGB(255, 22, 22, 22),
-                        ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Center(
+                    child: Text(
+                      "Remaining Bunkable Classes",
+                      style: GoogleFonts.poppins(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w600,
+                        color: const Color.fromARGB(255, 35, 35, 35),
                       ),
-                    );
-                  },
-                ),
-              ],
+                    ),
+                  ),
+                  FutureBuilder(
+                    future: calculate(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Column(
+                          children: [
+                            SizedBox(height: 45),
+                            Center(
+                              child: CircularProgressIndicator(
+                                color: const Color.fromARGB(255, 36, 36, 36),
+                              ),
+                            ),
+                          ],
+                        );
+                      }
+                      if (snapshot.hasError) {
+                        return Text(
+                          "Oops some error occured",
+                          style: GoogleFonts.poppins(
+                            fontSize: 102,
+                            fontWeight: FontWeight.w600,
+                            color: const Color.fromARGB(255, 22, 22, 22),
+                          ),
+                        );
+                      }
+                      final data = snapshot.requireData;
+                      return Center(
+                        child: Text(
+                          data.toString(),
+                          style: GoogleFonts.poppins(
+                            fontSize: 102,
+                            fontWeight: FontWeight.w600,
+                            color: const Color.fromARGB(255, 22, 22, 22),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
             ),
           ),
-          FutureBuilder(
-            future: getTarget(),
-            builder: (context, snapshot) {
-              return Row(children: [
-                Text("Attendance Target : "+snapshot.data.toString())
-              ],);
-            },
-          ),
+          SizedBox(height: 16),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20.0),
+            child: Container(
+              padding: EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(30),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color.fromARGB(63, 0, 0, 0),
+                      blurRadius: 20,
+                      blurStyle: BlurStyle.normal,
+                    )
+                  ]),
+              child: Column(
+                children: [
+                  SizedBox(height: 5),
+                  FutureBuilder(
+                    future: getTarget(),
+                    builder: (context, snapshot) {
+                      return BunkMeterComponent(
+                          snapshot: snapshot, name: "Attendance Target");
+                    },
+                  ),
+                  Divider(),
+                  FutureBuilder(
+                    future: getWorkingDays(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState ==
+                          ConnectionState.waiting) {}
+                      return BunkMeterComponent(
+                          snapshot: snapshot,
+                          name: "Expected No.of Working Days");
+                    },
+                  ),
+                  Divider(),
+                  FutureBuilder(
+                    future: calculate(),
+                    builder: (context, snapshot) {
+                      return BunkMeterComponent(
+                          snapshot: snapshot, name: "Total Bunkable Classes");
+                    },
+                  ),
+                ],
+              ),
+            ),
+          )
         ],
       ),
     );
