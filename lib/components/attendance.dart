@@ -22,10 +22,10 @@ class AttendanceMethods {
       Map<String,dynamic> attendance = {};
       for(int i = 0; i < data.length; i++) {
         if(data[i][0] == "FSD") {
-          attendance[data[i][0]] = data[i][3] +"/"+data[i][5]+","+data[i][4];
+          attendance[data[i][0]] = data[i][4] +"/"+data[i][3]+","+data[i][5];
         }
         else {
-          attendance[data[i][0]] = data[i][1] +"/"+data[i][3]+","+data[i][2];
+          attendance[data[i][0]] = data[i][2] +"/"+data[i][1]+","+data[i][3];
         }
       }
       print(attendance);
@@ -56,14 +56,14 @@ class AttendanceMethods {
     );
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
+      print(data);
       Map<String,dynamic> attendance = {};
       for(int i = 0; i < data.length; i++) {
         if(data[i][0] == "FSD") {
-          attendance[data[i][0]] = data[i][3] +"/"+data[i][5]+","+data[i][4];
+          attendance[data[i][0]] = data[i][4] +"/"+data[i][3]+","+data[i][5];
         }
         else {
-          
-          attendance[data[i][0]] = data[i][1] +"/"+data[i][3]+","+data[i][2];
+          attendance[data[i][0]] = data[i][2] +"/"+data[i][1]+","+data[i][3];
         }
       }
       print(attendance);

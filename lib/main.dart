@@ -3,6 +3,7 @@
 import 'package:bunkit/bloc/login_bloc.dart';
 import 'package:bunkit/components/attendance.dart';
 import 'package:bunkit/firebase_options.dart';
+import 'package:bunkit/pages/bunk_meter.dart';
 import 'package:bunkit/pages/profile_page.dart';
 import 'package:bunkit/pages/splash_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -14,45 +15,51 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 
 void callbackDispatcher() async {
   Workmanager().executeTask((task, inputData) async {
-    Future<String> getRegNo() async {
+    try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      return prefs.getString("reg_no").toString();
+      String reg_no = prefs.getString("reg_no") ?? "";
+      String password = prefs.getString("password") ?? "";
+
+      if (reg_no.isNotEmpty && password.isNotEmpty) {
+        debugPrint("Fetching attendance data for user: $reg_no");
+        await AttendanceMethods().fetchThisMonthSubWiseData(reg_no, password);
+        await AttendanceMethods().fetchTillNowSubWiseData(reg_no, password);
+        debugPrint("Attendance data successfully updated.");
+      } else {
+        debugPrint("Missing credentials. reg_no: ${reg_no.isEmpty ? 'MISSING' : 'PRESENT'}, password: ${password.isEmpty ? 'MISSING' : 'PRESENT'}");
+      }
+    } catch (e, stackTrace) {
+      debugPrint("Error in background task: $e");
+      debugPrint("Stack trace: $stackTrace");
     }
-
-    Future<String> getPassword() async {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      return prefs.getString("password").toString();
-    }
-
-    String reg_no = await getRegNo();
-    String password = await getPassword();
-
-    await AttendanceMethods().fetchThisMonthSubWiseData(reg_no, password);
-    await AttendanceMethods().fetchTillNowSubWiseData(reg_no, password);
-
     return Future.value(true);
   });
 }
 
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
   if (!kIsWeb) {
     Workmanager().initialize(
-      callbackDispatcher,
-      isInDebugMode: true,
+      callbackDispatcher, // Reference to the task handler
+      isInDebugMode: true, // Set to false for production
     );
 
     Workmanager().registerPeriodicTask(
-      "Bunkit : ",
-      "Attendance Refreshed",
-      frequency: const Duration(hours: 1),
-      initialDelay: calculateInitialDelay(),
-      //constraints: Constraints(networkType: NetworkType.connected),
+      "attendance_refresh_task", // Unique task name
+      "AttendanceRefresh", // Task identifier
+      frequency: const Duration(hours: 1), // Task runs every 1 hour
+      initialDelay: const Duration(minutes: 5), // Optional: delay after app start
+      constraints: Constraints(
+        networkType: NetworkType.connected, // Requires internet connection
+      ),
     );
   }
   runApp(MyApp());
 }
+
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -61,7 +68,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      //home: ProfilePage(),
+      // home: BunkMeter(),
       home: BlocProvider(
         create: (context) => LoginBloc(),
         child: SplashScreen(),

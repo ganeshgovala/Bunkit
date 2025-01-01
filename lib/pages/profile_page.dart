@@ -50,6 +50,13 @@ class _ProfilePageState extends State<ProfilePage> {
           fontWeight: FontWeight.bold,
           fontSize: 18,
         ),
+        buttonContent: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text("Submit", style : GoogleFonts.poppins(
+            fontSize : 18,
+            color: Colors.white,
+          )),
+        ),
         buttonStyle: BoxDecoration(
           color: const Color(0xFF232323),
           borderRadius: BorderRadius.circular(10),

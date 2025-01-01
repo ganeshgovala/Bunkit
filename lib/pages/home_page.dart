@@ -4,6 +4,7 @@ import 'package:bunkit/components/homepage_container.dart';
 import 'package:bunkit/components/text_styles.dart';
 import 'package:bunkit/pages/attendance_this_month.dart';
 import 'package:bunkit/pages/attendance_till_now.dart';
+import 'package:bunkit/pages/bunk_meter.dart';
 import 'package:bunkit/pages/under_development.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -58,6 +59,8 @@ class _HomePageState extends State<HomePage> {
       print("Error during data initialization: $e");
     }
   }
+
+  List<String> months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
   @override
   Widget build(BuildContext context) {
@@ -175,7 +178,7 @@ class _HomePageState extends State<HomePage> {
                     },
                     child: HomepageContainer(
                         heading: "This month",
-                        subHeading: "(November)",
+                        subHeading: "("+months[DateTime.now().month - 1]+")",
                         image: "thismonth.png"),
                   )
                 ],
@@ -243,10 +246,15 @@ class _HomePageState extends State<HomePage> {
                           MaterialPageRoute(
                               builder: (context) => UnderDevelopment()));
                     },
-                    child: HomepageContainer(
-                        heading: "Bunkit",
-                        subHeading: "Sem & Mid",
-                        image: "marksstore.png"),
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => BunkMeter()));
+                      },
+                      child: HomepageContainer(
+                          heading: "Bunkit",
+                          subHeading: "Sem & Mid",
+                          image: "marksstore.png"),
+                    ),
                   ),
                 ],
               ),
